@@ -4,6 +4,12 @@ const gravatar = require('gravatar');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const keys = require('../../config/keys');
+const passport = require('passport');
+
+//Load input validation
+const validateRegisterInput = require('../../validation/register');
+const validateLoginInput = require('../../validation/login');
+
 
 //Load User model
 const User = require('../../models/User');
@@ -21,12 +27,18 @@ router.get('/test', (req, res) => {
 // @desc    Tests users route
 // @access  Public
 router.post('/register', (req, res) => {
+    const { errors, isValid } = validateRegisterInput(req.body);
+
+    //Check validation
+    if(!isValid){
+        return res.status(400).json(errors);
+    }
+
     User.findOne({ email: req.body.email })
         .then(user => {
             if(user) {
-                return res.status(400).json({
-                    email: 'Email already exists'
-                });
+                errors.email = 'Email already exists';
+                return res.status(400).json(errors);
             }
             else {
                 const avatar = gravatar.url(req.body.email,{
@@ -64,6 +76,13 @@ router.post('/register', (req, res) => {
 // @desc    Login user / Returning the JWT Token
 // @access  Public
 router.post('./login', (req, res) => {
+    const { errors, isValid } = validateRegisterInput(req.body);
+
+    //Check validation
+    if(!isValid){
+        return res.status(400).json(errors);
+    }
+
     const email = req.body.email;
     const password = req.body.password;
 
@@ -75,9 +94,8 @@ router.post('./login', (req, res) => {
         .then(user => {
             //Check for user
             if(!user) {
-                return res.status(404).json({
-                    email: 'User not found'
-                });
+                errors.email = 'User not found'
+                return res.status(404).json(errors);
             }
             
             //Check password
@@ -96,7 +114,7 @@ router.post('./login', (req, res) => {
                         jwt.sign(payload, keys.secretOrKey, {
                             expiresIn: 3600
                         }, (err, token) => {
-                            res.json({
+                            return res.json({
                                 success: true,
                                 token: 'Bearer ' + token
                             });
@@ -109,6 +127,17 @@ router.post('./login', (req, res) => {
                     }
                 });
         })
+});
+
+// @route   GET api/users/current
+// @desc    Return current user
+// @access  Private
+router.get('/current', passport.authenticate('jwt', {session: false}), (req, res) => {
+    res.json({
+        id: req.user.id,
+        name: req.user.name,
+        email: req.user.email
+    });
 });
 
 module.exports = router;
