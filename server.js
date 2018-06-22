@@ -40,6 +40,7 @@ app.use('/api/posts', posts);
 
 const port = process.env.PORT || 5000;
 
+//Listen at given port
 app.listen(port, () => {
     console.log(`Server up on ${port}`);
 });
