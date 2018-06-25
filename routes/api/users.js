@@ -23,7 +23,7 @@ router.get('/test', (req, res) => {
     });
 });
 
-// @route   GET api/users/register
+// @route   POST api/users/register
 // @desc    Tests users route
 // @access  Public
 router.post('/register', (req, res) => {
