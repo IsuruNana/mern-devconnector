@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
+import propTypes from 'prop-types';
 import axios from 'axios';
 import classnames from 'classnames';
+import { connect } from 'react-redux';
+import { registerUser } from '../../actions/authActions';
 
 class Register extends Component {
     state = {
@@ -27,11 +30,15 @@ class Register extends Component {
             password2: this.state.password2
         }
 
-        axios.post('/api/users/register', newUser)
-            .then(res => {
-                console.log(res.data);
+        this.props.registerUser(newUser);
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if(nextProps.errors){
+            this.setState({
+                errors: nextProps.errors
             })
-            .catch(err => this.setState({errors: err.response.data}));
+        }
     }
 
     render() {
@@ -105,4 +112,15 @@ class Register extends Component {
     }
 };
 
-export default Register;
+Register.propTypes = {
+    registerUser: propTypes.func.isRequired,
+    auth: propTypes.object.isRequired,
+    errors: propTypes.object.isRequired
+}
+
+const mapStateToProps = (state) => ({
+    auth: state.auth,
+    error: state.errors
+});
+
+export default connect(mapStateToProps, {registerUser})(Register);
