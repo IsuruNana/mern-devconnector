@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import propTypes from 'prop-types';
-import axios from 'axios';
+import { withRouter } from 'react-router-dom';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { registerUser } from '../../actions/authActions';
@@ -30,7 +30,7 @@ class Register extends Component {
             password2: this.state.password2
         }
 
-        this.props.registerUser(newUser);
+        this.props.registerUser(newUser, this.props.history);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -120,7 +120,7 @@ Register.propTypes = {
 
 const mapStateToProps = (state) => ({
     auth: state.auth,
-    error: state.errors
+    errors: state.errors
 });
 
-export default connect(mapStateToProps, {registerUser})(Register);
+export default connect(mapStateToProps, {registerUser})(withRouter(Register));
