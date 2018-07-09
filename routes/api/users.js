@@ -77,8 +77,8 @@ router.post('/register', (req, res) => {
 // @route   GET api/users/login
 // @desc    Login user / Returning the JWT Token
 // @access  Public
-router.post('./login', (req, res) => {
-    const { errors, isValid } = validateRegisterInput(req.body);
+router.post('/login', (req, res) => {
+    const { errors, isValid } = validateLoginInput(req.body);
 
     //Check validation
     if(!isValid){
@@ -90,9 +90,7 @@ router.post('./login', (req, res) => {
 
     //Find the user by email
     User
-        .findOne({
-            email
-        })
+        .findOne({email})
         .then(user => {
             //Check for user
             if(!user) {
@@ -128,7 +126,7 @@ router.post('./login', (req, res) => {
                         });
                     }
                 });
-        })
+        });
 });
 
 // @route   GET api/users/current
