@@ -38,11 +38,6 @@ if(localStorage.jwtToken){
 }
 
 class App extends Component {
-  componentDidMount() {
-    if(this.props.auth.isAuthenticated) {
-        this.props.history.push('./dashboard');
-    }
-  }
   render() {
     return (
       <Provider store = {store}>
