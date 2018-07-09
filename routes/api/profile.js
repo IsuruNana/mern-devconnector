@@ -4,9 +4,9 @@ const mongoose = require('mongoose');
 const passport = require('passport');
 
 //Load Validation
-const validatioProfileInput = require('../../validation/profile');
-const validatioExperienceInput = require('../../validation/experience');
-const validatioEducationInput = require('../../validation/education');
+const validateProfileInput = require('../../validation/profile');
+const validateExperienceInput = require('../../validation/experience');
+const validateEducationInput = require('../../validation/education');
 
 //Load Profile Model
 const Profile = require('../../models/Profile');
@@ -88,7 +88,7 @@ router.get('/user/:user_id', (req, res) => {
 // @route   GET api/profile
 // @desc    Get current users profile
 // @access  Private
-router.get("/", passport.authenticate('jwt', {session: false}, (req, res) => {
+router.get('/', passport.authenticate('jwt', {session: false}), (req, res) => {
     const errors = {};
 
     Profile.findOne({user: req.user.id})
@@ -101,7 +101,7 @@ router.get("/", passport.authenticate('jwt', {session: false}, (req, res) => {
             res.json(profile);
         })
         .catch(err => res.status(404).json(err));
-}));
+});
 
 // @route   GET api/profile
 // @desc    Create or edit user profile
@@ -214,7 +214,7 @@ router.post('/experience', passport.authenticate('jwt', { session: false}), (req
 // @desc    Add education to profile
 // @access  Private
 router.post('/education', passport.authenticate('jwt', { session: false }), (req, res) => {
-    const { errors, isValid } = validateExperienceInput(req.body);
+    const { errors, isValid } = validateEducationInput(req.body);
 
     //Check Validation
     if(!isValid){
